@@ -12,65 +12,105 @@ Prototype → Validate → Build → Scale
 
 ---
 
-## 1. Prototype Architecture
+## Stack
 
-### Purpose
-Validar que usuarios entienden el catálogo y completan el flujo de pedido sin explicación
+| Layer | Tech |
+|---|---|
+| Framework | Next.js 16 (App Router) |
+| UI | Tailwind CSS + Antigravity |
+| Estado global | React Context (CartContext) + localStorage |
+| Base de datos | Supabase (products + orders) |
+| Deploy | Vercel |
+| Notificación | WhatsApp link (client-side, sin backend externo) |
 
-### Stack
-- Next.js (App Router) — páginas estáticas
-- Tailwind + Antigravity — UI
-- Datos hardcodeados en el código
+---
 
-### Components
-- UI: Páginas de catálogo, página de paquetes, formulario de pedido
-- Logic: Navegación entre categorías, validación del formulario
-- Mock/Data: Productos y precios hardcodeados en `src/data/`
+## Supabase Schema
 
-### Data Flow
+### `products`
 ```
-Cliente → Página catálogo → Selecciona producto → Formulario de pedido → Confirmación
+id          uuid PK
+name        text
+category    text  -- 'panal' | 'toallita' | 'paquete'
+description text
+price       numeric
+image_url   text
+size        text  -- 'S' | 'M' | 'L' | 'XL' | null
+in_stock    boolean
+created_at  timestamptz
+```
+
+### `orders`
+```
+id             uuid PK
+customer_name  text
+address        text
+phone          text
+notes          text
+items          jsonb  -- [{product_id, name, price, qty}]
+total          numeric
+created_at     timestamptz
 ```
 
 ---
 
-## 2. Production Architecture (MVP)
+## Páginas / Rutas
 
-### Purpose
-Sistema real: catálogo desde base de datos, pedidos capturados, dueño notificado
+| Ruta | Tipo | Fuente de datos |
+|---|---|---|
+| `/` | Server Component | Estático |
+| `/panales` | Server Component | Supabase products (category='panal'+'paquete') |
+| `/toallitas` | Server Component | Supabase products (category='toallita'+'paquete') |
+| `/pedido` | Client Component | CartContext |
+| `/confirmacion` | Client Component | URL params + estático |
 
-### Stack
-- Next.js (App Router) + Tailwind + Antigravity
-- Supabase — catálogo de productos + tabla de órdenes
-- Vercel — deploy + edge functions
-- Resend — email de notificación al dueño
+---
 
-### Components
-- Frontend: Next.js pages (catálogo, producto, checkout, confirmación)
-- Backend/API: Next.js API Routes (submit-order → Supabase + Resend)
-- Database: Supabase
-  - `products` (id, name, category, size, price, description, in_stock)
-  - `orders` (id, product_id, customer_name, address, phone, delivery_option, created_at)
-- Services: Resend (email al dueño con resumen del pedido)
+## Data Flow
 
-### Data Flow
+### Exploración del catálogo
 ```
-Cliente → Catálogo (Supabase) → Selecciona → Formulario
-→ API Route → Supabase (orders) + Resend (email dueño) → Confirmación
+Cliente → /panales o /toallitas
+→ Next.js Server Component fetchea Supabase products
+→ Muestra productos con botón "Agregar al carrito"
+→ CartContext actualiza estado + persiste en localStorage
+```
+
+### Flujo de pedido
+```
+Cliente → /pedido
+→ Lee CartContext → muestra resumen del carrito
+→ Llena formulario (nombre, dirección, teléfono)
+→ Submit → API Route → Supabase INSERT orders
+→ Redirect → /confirmacion?order_id=[id]
+```
+
+### Confirmación
+```
+/confirmacion
+→ Muestra instrucciones de pago (datos bancarios — texto estático)
+→ Genera WhatsApp link:
+   wa.me/[número]?text=*Nuevo Pedido Casa GUGÜ*
+   Cliente: [nombre] | Dirección: [...] | Tel: [...]
+   Productos: [lista] | Total: $[monto]
+→ Cliente hace clic → WhatsApp del dueño recibe el pedido
 ```
 
 ---
 
-## 3. Evolution
+## Env Vars (.env.local)
 
-- Prototype: datos hardcodeados, sin DB, formulario fake
-- MVP: Supabase real + notificación al dueño funcional
-- Futuro: Panel admin para gestionar pedidos, integración de pagos (Mercado Pago / Stripe)
+```
+NEXT_PUBLIC_SUPABASE_URL=
+NEXT_PUBLIC_SUPABASE_ANON_KEY=
+NEXT_PUBLIC_WHATSAPP_NUMBER=52XXXXXXXXXX
+```
 
 ---
 
 ## Rules
 
-- High-level only — no código aquí
-- No over-engineering — 2 semanas de deadline
-- Must evolve con el sistema
+- Sin backend externo para notificaciones — WhatsApp link es client-side
+- Sin autenticación — catálogo público, órdenes anónimas
+- No sobre-engineering — MVP funcional primero
+- Cambios de precio → Supabase dashboard (sin re-deploy)

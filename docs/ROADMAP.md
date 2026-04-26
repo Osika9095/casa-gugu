@@ -9,95 +9,81 @@
 
 ## Objective
 
-- Prototype success: Usuario ve el catálogo completo y puede dejar su pedido sin ayuda
-- MVP success: Dueño recibe pedidos listos para gestionar — cero dependencia de WhatsApp
+- Prototype success: Usuario agrega productos al carrito y completa el pedido sin ayuda
+- MVP success: Dueño recibe WhatsApp con pedido completo listo para gestionar
 
 ---
 
 ## Phases
 
-### 1. Setup & Estructura Base
+### 1. Setup & Base
 **Deadline:** 28 abril
 
-- Inicializar Next.js + Tailwind + Antigravity
-- Configurar Supabase (tablas: products, orders)
-- Deploy pipeline en Vercel desde GitHub
-- Confirmar catálogo real con el cliente
+**Entregables:**
+- ✅ Next.js 16 + TypeScript + Tailwind
+- Supabase: proyecto + tablas `products` y `orders` + datos reales del catálogo
+- Vercel: repo conectado + primera preview URL
 
-**GO:** Proyecto corre en local + preview en Vercel ✓
-
----
-
-### 2. Prototype — Catálogo (Validación)
-**Deadline:** 2 mayo
-
-- Páginas de catálogo con datos hardcodeados:
-  - Pañales: tallas + precios
-  - Toallitas: tipos + precios
-  - Paquetes / bundles
-- Navegación básica entre categorías
-
-**Checkpoint:**
-- ¿El cliente entiende el catálogo sin explicación? YES/NO
-- ¿Los precios y opciones son claros? YES/NO
-- Decisión: proceed / ajustar copy / pivot
+**GO:** Proyecto corre en local + preview en Vercel con datos reales en Supabase
+**NO-GO:** Si Supabase no conecta en 2 días → usar JSON estático y continuar igual
 
 ---
 
-### 3. Technical Direction
+### 2. Catálogo + Carrito
 **Deadline:** 3 mayo
 
-- Conectar Supabase con los datos reales del catálogo
-- Confirmar flujo de notificación: Resend email vs WhatsApp link
-- Definir estructura del formulario de pedido
+**Entregables:**
+- Landing `/`: hero + categorías (Pañales / Toallitas) + CTA
+- `/panales`: productos por talla desde Supabase + sección de paquetes
+- `/toallitas`: productos desde Supabase + sección de paquetes
+- CartContext (React Context + localStorage): agregar/quitar productos
+- UI de carrito visible en todas las páginas
+
+**GO:** Usuario puede explorar catálogo y agregar múltiples productos al carrito
+**NO-GO:** Si carrito añade >3 días de delay → reducir a 1 producto por pedido y continuar
 
 ---
 
-### 4. Development (MVP)
-**Deadline:** 7 mayo
+### 3. Flujo de Pedido
+**Deadline:** 6 mayo
 
-- Flujo completo funcional:
-  1. Ver productos y paquetes (desde Supabase)
-  2. Seleccionar producto + ver precio + opción de pago
-  3. Formulario: Nombre, Dirección, Teléfono, Producto elegido
-- Notificación al dueño al recibir pedido
-- Reemplazar datos hardcodeados con Supabase real
+**Entregables:**
+- `/pedido`: revisión del carrito + formulario (Nombre, Dirección, Teléfono)
+- Submit → guardar orden en Supabase (tabla `orders`, items como JSONB)
+- `/confirmacion`: instrucciones de pago (datos bancarios estáticos) + botón WhatsApp pre-llenado con todos los items
+
+**GO:** Dueño recibe WhatsApp con pedido completo. Orden guardada en Supabase.
+**NO-GO:** Si WhatsApp link no funciona en mobile → fallback: mostrar texto para copiar manualmente
 
 ---
 
-### 5. Validación
+### 4. Validación
 **Deadline:** 8 mayo
 
-- Prueba con Ricky Galvez, Marian Beltrand, Leonel Guerra
-- Verificar que el dueño recibe la orden completa
-- Corregir friction points identificados
+**Entregables:**
+- Prueba completa con Ricky Galvez, Marian Beltrand, Leonel Guerra
+- Fix de friction points identificados
 
-**GO/NO-GO:**
-- ¿3 usuarios completan el flujo sin ayuda? YES/NO
-- ¿Dueño recibe notificación correcta? YES/NO
-
----
-
-### 6. Deployment
-**Deadline:** 9 mayo
-
-- Dominio final apuntando a Vercel
-- Variables de entorno en producción
-- Verificación en mobile (WhatsApp → sitio es el flujo probable)
+**GO:** 3 de 3 usuarios completan el flujo sin ayuda
+**NO-GO:** Si menos de 2 completan → identificar blocker crítico y decidir simplificar o extender 1 día
 
 ---
 
-### 7. Optimization
-**Post-launch**
+### 5. Launch
+**Deadline:** 10 mayo
 
-- Reducir abandono en formulario de captura
-- Posible panel admin para gestionar pedidos
-- Integración de pagos (fase futura)
+**Entregables:**
+- Dominio real → apuntado a Vercel
+- Variables de entorno configuradas en producción
+- Verificación completa en mobile (iOS + Android)
+
+**GO:** Sitio accesible desde dominio real en mobile sin errores
+**NO-GO:** Sin dominio listo → lanzar con URL de Vercel igualmente
 
 ---
 
 ## Rules
 
 - PROJECT_STATE overrides this
-- Update only when direction changes
 - Deadline 10 mayo es hard — scope reduction > extensión
+- Si blocker real → activar NO-GO correspondiente, no esperar

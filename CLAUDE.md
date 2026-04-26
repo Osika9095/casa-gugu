@@ -13,11 +13,11 @@ Sustituye el proceso manual de WhatsApp: cliente ve productos, elige, y deja su 
 
 ---
 
-## MVP (3 pasos core)
+## MVP (flujo core)
 
-1. Ver catálogo — pañales (tallas/precios), toallitas (tipos/precios), paquetes
-2. Ver precios y opciones de pago
-3. Confirmar selección + datos de entrega → notificación al dueño
+1. Ver catálogo → agregar productos al carrito (múltiples)
+2. Ir a /pedido → revisar carrito + llenar formulario (nombre, dirección, teléfono)
+3. Confirmar → orden guardada en Supabase + pantalla con instrucciones de pago + botón WhatsApp pre-llenado al dueño
 
 ---
 
@@ -27,18 +27,19 @@ Sustituye el proceso manual de WhatsApp: cliente ve productos, elige, y deja su 
 |---|---|
 | Framework | Next.js (App Router) |
 | UI | Tailwind + Antigravity |
+| Estado carrito | React Context + localStorage |
 | Base de datos | Supabase |
 | Deploy | Vercel |
-| Notificación | Resend (email) |
+| Notificación | WhatsApp link pre-llenado (sin backend externo) |
 
 ---
 
 ## Constraints
 
-- Deadline: **10 mayo 2026** (13 días desde el 27 abril)
-- Sin integración de pagos — solo captura de pedido
+- Deadline: **10 mayo 2026**
+- Sin integración de pagos — muestra instrucciones de pago (datos bancarios) en /confirmacion
+- Pedido: múltiples productos por orden (carrito)
 - Sitio web es el **único canal de venta** — tolerancia cero a errores de onboarding
-- Budget de herramientas: por confirmar
 
 ---
 
