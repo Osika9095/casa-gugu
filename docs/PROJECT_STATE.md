@@ -5,6 +5,8 @@ project_type: individual
 updated: 2026-04-26
 phase: Phase 1 — Setup & Estructura Base
 phase_status: In Progress
+model: Claude Sonnet 4.6
+branch: work/phase1-setup
 
 > Type: Dynamic (source of truth)
 > Used: /new-session, /checkpoint, /update-dupla
@@ -20,25 +22,26 @@ Lanzar catálogo web operativo para Casa GUGÜ antes del 10 de mayo — permite 
 
 ## Status
 
-Proyecto inicializado. Estructura de carpetas creada. Docs base generados. Aún sin código ni setup de Next.js.
+Next.js 16 + TypeScript + Tailwind configurado y corriendo en local. Branch work/phase1-setup activo. Falta Supabase + Vercel para completar Phase 1.
 
 ---
 
 ## In Progress
 
-- [ ] Inicializar proyecto Next.js con Tailwind
+- [x] Inicializar proyecto Next.js con Tailwind
 - [ ] Configurar Supabase (tablas: products, orders)
-- [ ] Confirmar catálogo real con el cliente (tallas, precios, paquetes)
+- [ ] Conectar Next.js con Supabase
+- [ ] Deploy pipeline en Vercel
 
 ---
 
 ## Next Steps
 
-- [ ] **Must:** Obtener catálogo real del cliente (tallas de pañales, tipos de toallitas, precios, paquetes)
-- [ ] **Must:** `npx create-next-app@latest casa-gugu --typescript --tailwind --app`
 - [ ] **Must:** Crear proyecto en Supabase + definir tablas `products` y `orders`
-- [ ] **Should:** Definir opción de notificación al dueño (Resend email vs WhatsApp link)
-- [ ] **Could:** Decidir si el inventario se gestiona desde Supabase dashboard o hay un panel admin
+- [ ] **Must:** Instalar `@supabase/supabase-js` + configurar cliente en `src/lib/supabase.ts`
+- [ ] **Must:** Conectar repo a Vercel + primera preview URL
+- [ ] **Should:** Definir notificación al dueño (Resend email vs WhatsApp link)
+- [ ] **Could:** Decidir si inventario se gestiona desde Supabase dashboard o panel admin
 
 ---
 
