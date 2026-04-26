@@ -1,8 +1,8 @@
-# Architecture — BabyBot Instagram
+# Architecture — Casa GUGÜ
 
-> Type: Dynamic (updated via /progress and /update-context)
+> Type: Dynamic (updated via /checkpoint and /update-dupla)
 > Used: building + system changes
-> Last updated: 2026-04-19
+> Last updated: 2026-04-26
 
 ---
 
@@ -15,54 +15,62 @@ Prototype → Validate → Build → Scale
 ## 1. Prototype Architecture
 
 ### Purpose
-Validar que usuarios completan el flujo conversacional y capturan su pedido
+Validar que usuarios entienden el catálogo y completan el flujo de pedido sin explicación
 
 ### Stack
-- ManyChat (plan gratuito)
-- Instagram DM API (via ManyChat)
+- Next.js (App Router) — páginas estáticas
+- Tailwind + Antigravity — UI
+- Datos hardcodeados en el código
 
 ### Components
-- UI: Mensajes y botones en Instagram DM
-- Logic: Flujos ManyChat con condiciones simples
-- Mock/Data: Catálogo de productos hardcodeado en los mensajes
+- UI: Páginas de catálogo, página de paquetes, formulario de pedido
+- Logic: Navegación entre categorías, validación del formulario
+- Mock/Data: Productos y precios hardcodeados en `src/data/`
 
 ### Data Flow
-User → Instagram DM → ManyChat Flow → Respuesta automática
+```
+Cliente → Página catálogo → Selecciona producto → Formulario de pedido → Confirmación
+```
 
 ---
 
 ## 2. Production Architecture (MVP)
 
 ### Purpose
-Bot operativo 24/7 con captura real de pedidos
+Sistema real: catálogo desde base de datos, pedidos capturados, dueño notificado
 
 ### Stack
-- ManyChat (plan gratuito)
-- Instagram API (via ManyChat)
-- Google Sheets (captura de pedidos)
+- Next.js (App Router) + Tailwind + Antigravity
+- Supabase — catálogo de productos + tabla de órdenes
+- Vercel — deploy + edge functions
+- Resend — email de notificación al dueño
 
 ### Components
-- Frontend: Flujo conversacional en Instagram DM
-- Backend/API: ManyChat flows + Zapier/Make (conector gratuito a Sheets)
-- Database: Google Sheets (registro de pedidos)
-- Services: Notificación al dueño vía email o DM interno
+- Frontend: Next.js pages (catálogo, producto, checkout, confirmación)
+- Backend/API: Next.js API Routes (submit-order → Supabase + Resend)
+- Database: Supabase
+  - `products` (id, name, category, size, price, description, in_stock)
+  - `orders` (id, product_id, customer_name, address, phone, delivery_option, created_at)
+- Services: Resend (email al dueño con resumen del pedido)
 
 ### Data Flow
-User → Instagram DM → ManyChat Flow → Google Sheets (pedido) → Notificación al dueño
+```
+Cliente → Catálogo (Supabase) → Selecciona → Formulario
+→ API Route → Supabase (orders) + Resend (email dueño) → Confirmación
+```
 
 ---
 
 ## 3. Evolution
 
-- Prototype: flujos estáticos, sin integración externa
-- MVP: agrega Google Sheets para persistencia de pedidos
-- Futuro: integración de pagos (Mercado Pago u otro) o CRM básico
+- Prototype: datos hardcodeados, sin DB, formulario fake
+- MVP: Supabase real + notificación al dueño funcional
+- Futuro: Panel admin para gestionar pedidos, integración de pagos (Mercado Pago / Stripe)
 
 ---
 
 ## Rules
 
-- High-level only
-- No code
-- No over-engineering
-- Must evolve with system
+- High-level only — no código aquí
+- No over-engineering — 2 semanas de deadline
+- Must evolve con el sistema

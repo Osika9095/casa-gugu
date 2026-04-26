@@ -1,0 +1,30 @@
+{
+  "project": "casa-gugu",
+  "generated": "2026-04-26T00:00:00",
+  "lastCommit": "46e92c4",
+  "phase": "Phase 1 — Setup & Estructura Base",
+  "structure": {
+    "src/": { "files": 0, "purpose": "Código fuente Next.js — vacío, pendiente inicializar" },
+    "docs/": { "files": 5, "purpose": "Documentación del proyecto (ROADMAP, ARCHITECTURE, PROJECT_STATE, PROBLEMS, code-review-graph)" },
+    "public/": { "files": 0, "purpose": "Assets estáticos — imágenes de productos, logos" },
+    "tests/": { "files": 0, "purpose": "Tests — pendiente" }
+  },
+  "riskZones": [
+    { "path": "src/app/api/submit-order/", "risk": "HIGH", "reason": "Punto de captura de pedidos — fallo aquí = orden perdida, dueño no notificado" },
+    { "path": "src/lib/supabase.ts", "risk": "HIGH", "reason": "Conexión DB — error rompe catálogo y formulario" },
+    { "path": ".env.local", "risk": "HIGH", "reason": "Keys de Supabase y Resend — nunca commitear" },
+    { "path": "docs/PROJECT_STATE.md", "risk": "MEDIUM", "reason": "Source of truth — debe estar actualizado siempre" }
+  ],
+  "dependencies": {
+    "PROJECT_STATE.md": ["ROADMAP.md", "ARCHITECTURE.md"],
+    "CLAUDE.md": ["PROJECT_STATE.md"],
+    "ROADMAP.md": ["ARCHITECTURE.md"]
+  },
+  "metadata": {
+    "imlScore": 4,
+    "deadline": "2026-05-10",
+    "team": "individual",
+    "type": "software",
+    "regenerate": "after phase advance or architectural changes"
+  }
+}
